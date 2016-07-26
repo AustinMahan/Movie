@@ -1,10 +1,7 @@
 $(document).ready(function() {
   $('button').click(function(){
-
+    findMovie($('input').val())
   })
-
-
-findMovie('frozen')
 })
 
 function findMovie(movie){
@@ -14,15 +11,13 @@ function findMovie(movie){
   // }).done(function(data){
   //   console.log(data);
   // })
-  
+
   var promise = Promise.resolve($.ajax({
     url:'http://www.omdbapi.com/?t=' + movie,
     method: 'get'
   }))
   .then(function(data){
-    return data
-  })
-  .then(function(movie){
-    console.log(movie.Title);
+    $('img').attr('src', data.poster)
+    $('.title').append('<h2>'+ data.title + '</h2>')
   })
 }
