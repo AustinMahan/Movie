@@ -4,36 +4,54 @@ $(document).ready(function() {
   })
 
   $('button').click(function(){
-    if($('input').val()){
-      findMovie($('input').val())
 
+    if($('input').val()){
+      var isAllowed = true
+      titleCreated.forEach(function(titles){
+        if(titles == $('input').val()){
+          isAllowed = false
+        }
+      })
+      if(isAllowed){
+        titleCreated.push($('input').val())
+        var promise = Promise.resolve($.ajax({
+          url:'http://www.omdbapi.com/?t=' + $('input').val(),
+          method: 'get'
+        })).then(function(data){
+          findMovie(data)
+          addOptions(data)
+        })
+      }else{
+        alert('You already added that')
+      }
     }
+    $('form')[0].reset()
   })
 })
+var titleCreated = []
 
+$('select').change(function(){
+  $('.pics').css('display', 'none')
+  var currentGenre = $('select').val()
+  console.log(currentGenre);
+  $('.'+ currentGenre).parent().fadeIn()
+})
 
 var arrOfGenre = []
 
 function findMovie(movie){
-  var promise = Promise.resolve($.ajax({
-    url:'http://www.omdbapi.com/?t=' + movie,
-    method: 'get'
-  }))
-  .then(function(data){
-    console.log(data);
-    $('.title').append('<div class="pics" style="float:left"><img src="' + data.Poster + '"/><h2>'+ data.Title + '</h2></div>')
-    arrOfGenre = arrOfGenre.concat(data.Genre.split(', '))
-    arrOfGenre = arrOfGenre.filter(function(item, pos, self){
-      return self.indexOf(item) == pos;
-    })
-    console.log(arrOfGenre);
-    $('.selectpicker').empty()
-    for(var i = 0; i < arrOfGenre.length; i++){
-      $('.selectpicker').append('<option val="' + arrOfGenre[i] + '">' + arrOfGenre[i] + '</option>')
-    }
-  })
+  var listOfGenre = movie.Genre.replace(/,/g , '')
+
+  $('.title').append('<div class="pics" style="float:left"><img class="' + listOfGenre + '" src="' + movie.Poster + '"/><h2>'+ movie.Title + '</h2></div>')
 }
 
-function addOptions(data){
-
+function addOptions(movie){
+  arrOfGenre = arrOfGenre.concat(movie.Genre.split(', '))
+  arrOfGenre = arrOfGenre.filter(function(item, pos, self){
+    return self.indexOf(item) == pos;
+  })
+  $('.selectpicker').empty()
+  for(var i = 0; i < arrOfGenre.length; i++){
+    $('.selectpicker').append('<option val="' + arrOfGenre[i] + '">' + arrOfGenre[i] + '</option>')
+  }
 }
