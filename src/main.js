@@ -14,6 +14,7 @@ function findMovie(movie){
   // }).done(function(data){
   //   console.log(data);
   // })
+  
   var promise = Promise.resolve($.ajax({
     url:'http://www.omdbapi.com/?t=' + movie,
     method: 'get'
