@@ -1,4 +1,8 @@
 $(document).ready(function() {
+  $(document).submit(function(e){
+    e.preventDefault()
+  })
+
   $('button').click(function(){
     findMovie($('input').val())
   })
@@ -17,7 +21,8 @@ function findMovie(movie){
     method: 'get'
   }))
   .then(function(data){
-    $('img').attr('src', data.poster)
-    $('.title').append('<h2>'+ data.title + '</h2>')
+    console.log(data);
+    $('img').attr('src', data.Poster)
+    $('.title').append('<h2>'+ data.Title + '</h2>')
   })
 }
